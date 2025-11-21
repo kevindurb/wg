@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+---
+version: '3'
+tasks:
+  genkey:
+    requires:
+      vars: [NAME]
+    cmds:
+      - wg genkey > ./keys/{{.NAME}}.key
+      - wg pubkey < ./keys/{{.NAME}}.key > ./keys/{{.NAME}}.pub
