@@ -1,0 +1,4 @@
+---
+- name: Build Mesh Peer Config
+  hosts: edge_gateways
+  tasks: []
