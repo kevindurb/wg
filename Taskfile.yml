@@ -4,7 +4,40 @@ version: '3'
 tasks:
   genkey:
     requires:
-      vars: [NAME]
-    cmds:
-      - wg genkey > ./keys/{{.NAME}}.key
-      - wg pubkey < ./keys/{{.NAME}}.key > ./keys/{{.NAME}}.pub
+      vars: [FILE]
+    cmd: >
+      wg genkey
+      | ansible-vault encrypt_string
+      --stdin-name private_key --output -
+      >> {{.FILE}}
+  pubkey:
+    requires:
+      vars: [FILE]
+    env:
+      PUBKEY:
+        sh: >
+          yq .private_key
+          < {{.FILE}}
+          | ansible-vault decrypt -
+          | wg pubkey
+    cmd: >
+      yq e ".public_key = strenv(PUBKEY)"
+      -i {{.FILE}}
+
+  genkey:all:
+    sources:
+      - ./host_vars/*.yml
+    cmd:
+      for: sources
+      task: genkey
+      vars:
+        FILE: '{{.ITEM}}'
+
+  pubkey:all:
+    sources:
+      - ./host_vars/*.yml
+    cmd:
+      for: sources
+      task: pubkey
+      vars:
+        FILE: '{{.ITEM}}'
