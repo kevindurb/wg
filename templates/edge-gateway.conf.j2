@@ -3,7 +3,9 @@ PrivateKey = {{ wg_private_key }}
 Address = {{ wg_address }}/32
 ListenPort = 51820
 PostUp = iptables -A FORWARD -i %i -j ACCEPT
+PostUp = iptables -A FORWARD -0 %i -j ACCEPT
 PostDown = iptables -D FORWARD -i %i -j ACCEPT
+PostDown = iptables -D FORWARD -o %i -j ACCEPT
 
 # Mesh Peers
 {% for peer in mesh_peers %}
