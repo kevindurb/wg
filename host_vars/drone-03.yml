@@ -1,5 +1,7 @@
 ---
+wg_template_name: mesh-peer
 wg_address: 10.1.1.23
+wg_endpoint: 192.168.42.23
 wg_private_key: !vault |
   $ANSIBLE_VAULT;1.1;AES256
   31393564343264626466383165626166336433333566383131613934326465616563346362666433

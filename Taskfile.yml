@@ -41,3 +41,12 @@ tasks:
       task: pubkey
       vars:
         FILE: '{{.ITEM}}'
+
+  provision:
+    requires:
+      vars: [HOST]
+    cmd: >
+      ansible-playbook
+      -i ./hosts.yml
+      --limit={{.HOST}}
+      ./playbooks/provision.yml

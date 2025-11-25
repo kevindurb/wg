@@ -1,5 +1,7 @@
 ---
+wg_template_name: edge-gateway
 wg_address: 10.1.2.1
+wg_endpoint: 107.174.133.73
 wg_private_key: !vault |
   $ANSIBLE_VAULT;1.1;AES256
   34393363323563343230623139663937386533336136386637303765396563626666653138313035

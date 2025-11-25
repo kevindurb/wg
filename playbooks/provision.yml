@@ -1,17 +1,41 @@
 ---
 - name: Provision
+  become: true
   hosts: all
   tasks:
+    - name: Get node lists
+      set_fact:
+        mesh_peers: >
+          {{ groups['mesh_peers'] | map('extract', hostvars) | list }}
+        edge_clients: >
+          {{ groups['edge_clients'] | map('extract', hostvars) | list }}
+        edge_gateways: >
+          {{ groups['edge_gateways'] | map('extract', hostvars) | list }}
+
     - name: Build peer config
-      become: true
       ansible.builtin.template:
-        src: templates/{{ wg_template_name }}.conf.j2
+        src: ../templates/{{ wg_template_name }}.conf.j2
         dest: /etc/wireguard/wg0.conf
         owner: root
         group: root
         mode: '0600'
       notify:
         - Restart wireguard
+
+    - name: Fix SELinux context for wireguard
+      block:
+        - name: Ensure SELinux knows the correct context for WireGuard configs
+          ansible.builtin.sefcontext:
+            target: '/etc/wireguard(/.*)?'
+            setype: etc_t
+            state: present
+
+        - name: Apply SELinux contexts to WireGuard directory
+          ansible.builtin.command: restorecon -Rv /etc/wireguard
+          changed_when: false
+      when:
+        - ansible_facts.selinux is defined
+        - ansible_facts.selinux.status == "enabled"
 
     - name: Ensure WireGuard interface is enabled and running
       ansible.builtin.systemd:

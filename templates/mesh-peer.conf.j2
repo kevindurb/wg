@@ -1,7 +1,32 @@
 [Interface]
-PrivateKey = {{ private_key }}
-Address = {{ ip }}/16
+PrivateKey = {{ wg_private_key }}
+Address = {{ wg_address }}/16
 ListenPort = 51820
 DNS = 192.168.42.53
 PostUp = iptables -A FORWARD -i %i -j ACCEPT
 PostDown = iptables -D FORWARD -i %i -j ACCEPT
+
+# Mesh Peers
+{%- for peer in mesh_peers %}
+[Peer]
+PublicKey = {{ peer.wg_public_key }}
+AllowedIPs = {{ peer.wg_address }}/32
+Endpoint = {{ peer.wg_endpoint }}:51820
+PersistentKeepalive = 25
+{% endfor -%}
+
+# Edge Gateways
+{%- for peer in edge_gateways %}
+[Peer]
+PublicKey = {{ peer.wg_public_key }}
+AllowedIPs = {{ peer.wg_address }}/32
+Endpoint = {{ peer.wg_endpoint }}:51820
+PersistentKeepalive = 25
+{% endfor -%}
+
+# Edge Clients
+{%- for peer in edge_clients %}
+[Peer]
+PublicKey = {{ peer.wg_public_key }}
+AllowedIPs = {{ peer.wg_address }}/32
+{% endfor -%}
