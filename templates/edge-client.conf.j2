@@ -11,10 +11,3 @@ AllowedIPs = 10.1.0.0/16
 Endpoint = {{ peer.wg_endpoint }}:51820
 PersistentKeepalive = 25
 {% endfor %}
-
-# Edge Clients
-{% for peer in edge_clients %}
-[Peer]
-PublicKey = {{ peer.wg_public_key }}
-AllowedIPs = {{ peer.wg_address }}/32
-{% endfor %}
