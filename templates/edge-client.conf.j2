@@ -5,10 +5,10 @@ ListenPort = 51820
 DNS = 192.168.42.53
 
 # Edge Gateways
-{%- for peer in edge_gateways %}
+{% for peer in edge_gateways %}
 [Peer]
 PublicKey = {{ peer.wg_public_key }}
 AllowedIPs = {{ peer.wg_address }}/32, 10.1.0.0/16
 Endpoint = {{ peer.wg_endpoint }}:51820
 PersistentKeepalive = 25
-{% endfor -%}
+{% endfor %}

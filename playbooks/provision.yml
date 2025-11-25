@@ -22,17 +22,9 @@
       notify:
         - Restart wireguard
 
-    - name: Fix SELinux context for wireguard
-      block:
-        - name: Ensure SELinux knows the correct context for WireGuard configs
-          ansible.builtin.sefcontext:
-            target: '/etc/wireguard(/.*)?'
-            setype: etc_t
-            state: present
-
-        - name: Apply SELinux contexts to WireGuard directory
-          ansible.builtin.command: restorecon -Rv /etc/wireguard
-          changed_when: false
+    - name: Apply SELinux contexts to WireGuard directory
+      ansible.builtin.command: restorecon -Rv /etc/wireguard
+      changed_when: false
       when:
         - ansible_facts.selinux is defined
         - ansible_facts.selinux.status == "enabled"
@@ -42,6 +34,13 @@
         name: wg-quick@wg0
         enabled: true
         state: started
+
+    - name: Punch UDP 51820 through firewalld
+      ansible.posix.firewalld:
+        port: 51820/udp
+        permanent: yes
+        immediate: yes
+        state: enabled
 
   handlers:
     - name: Restart wireguard

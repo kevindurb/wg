@@ -7,26 +7,26 @@ PostUp = iptables -A FORWARD -i %i -j ACCEPT
 PostDown = iptables -D FORWARD -i %i -j ACCEPT
 
 # Mesh Peers
-{%- for peer in mesh_peers %}
+{% for peer in mesh_peers %}
 [Peer]
 PublicKey = {{ peer.wg_public_key }}
 AllowedIPs = {{ peer.wg_address }}/32
 Endpoint = {{ peer.wg_endpoint }}:51820
 PersistentKeepalive = 25
-{% endfor -%}
+{% endfor %}
 
 # Edge Gateways
-{%- for peer in edge_gateways %}
+{% for peer in edge_gateways %}
 [Peer]
 PublicKey = {{ peer.wg_public_key }}
 AllowedIPs = {{ peer.wg_address }}/32
 Endpoint = {{ peer.wg_endpoint }}:51820
 PersistentKeepalive = 25
-{% endfor -%}
+{% endfor %}
 
 # Edge Clients
-{%- for peer in edge_clients %}
+{% for peer in edge_clients %}
 [Peer]
 PublicKey = {{ peer.wg_public_key }}
 AllowedIPs = {{ peer.wg_address }}/32
-{% endfor -%}
+{% endfor %}
