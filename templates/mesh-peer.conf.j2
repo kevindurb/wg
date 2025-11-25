@@ -1,6 +1,6 @@
 [Interface]
 PrivateKey = {{ wg_private_key }}
-Address = {{ wg_address }}/16
+Address = {{ wg_address }}/32
 ListenPort = 51820
 PostUp = iptables -A FORWARD -i %i -j ACCEPT
 PostUp = iptables -A FORWARD -o %i -j ACCEPT
@@ -11,7 +11,7 @@ PostDown = iptables -D FORWARD -o %i -j ACCEPT
 {% for peer in mesh_peers %}
 [Peer]
 PublicKey = {{ peer.wg_public_key }}
-AllowedIPs = {{ peer.wg_address }}/32
+AllowedIPs = {{ peer.wg_address }}/32, 10.1.10.0/24
 Endpoint = {{ peer.wg_endpoint }}:51820
 PersistentKeepalive = 25
 {% endfor %}
@@ -20,7 +20,7 @@ PersistentKeepalive = 25
 {% for peer in edge_gateways %}
 [Peer]
 PublicKey = {{ peer.wg_public_key }}
-AllowedIPs = {{ peer.wg_address }}/32
+AllowedIPs = 10.1.2.0/24, 10.1.3.0/24
 Endpoint = {{ peer.wg_endpoint }}:51820
 PersistentKeepalive = 25
 {% endfor %}

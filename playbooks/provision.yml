@@ -35,12 +35,18 @@
         enabled: true
         state: started
 
+    - name: Gather service facts
+      ansible.builtin.service_facts:
+
     - name: Punch UDP 51820 through firewalld
       ansible.posix.firewalld:
         port: 51820/udp
         permanent: yes
         immediate: yes
         state: enabled
+      when:
+        - ansible_facts.services['firewalld.service'] is defined
+        - ansible_facts.services['firewalld.service'].state == "running"
 
   handlers:
     - name: Restart wireguard

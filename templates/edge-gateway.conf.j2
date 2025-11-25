@@ -11,16 +11,7 @@ PostDown = iptables -D FORWARD -o %i -j ACCEPT
 {% for peer in mesh_peers %}
 [Peer]
 PublicKey = {{ peer.wg_public_key }}
-AllowedIPs = {{ peer.wg_address }}/32
-{% endfor %}
-
-# Edge Gateways
-{% for peer in edge_gateways %}
-[Peer]
-PublicKey = {{ peer.wg_public_key }}
-AllowedIPs = {{ peer.wg_address }}/32
-Endpoint = {{ peer.wg_endpoint }}:51820
-PersistentKeepalive = 25
+AllowedIPs = {{ peer.wg_address }}/32, 10.1.10.0/24
 {% endfor %}
 
 # Edge Clients
