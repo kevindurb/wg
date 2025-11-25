@@ -8,7 +8,7 @@ tasks:
     cmd: >
       wg genkey
       | ansible-vault encrypt_string
-      --stdin-name private_key --output -
+      --stdin-name wg_private_key --output -
       >> {{.FILE}}
   pubkey:
     requires:
@@ -16,12 +16,12 @@ tasks:
     env:
       PUBKEY:
         sh: >
-          yq .private_key
+          yq .wg_private_key
           < {{.FILE}}
           | ansible-vault decrypt -
           | wg pubkey
     cmd: >
-      yq e ".public_key = strenv(PUBKEY)"
+      yq e ".wg_public_key = strenv(PUBKEY)"
       -i {{.FILE}}
 
   genkey:all:
