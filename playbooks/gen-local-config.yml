@@ -1,0 +1,47 @@
+---
+- name: Generate Config Locally
+  connection: local
+  hosts: all
+  tasks:
+    - name: Get node lists
+      set_fact:
+        mesh_peers: >
+          {{ groups['mesh_peers'] | map('extract', hostvars) | list }}
+        edge_clients: >
+          {{ groups['edge_clients'] | map('extract', hostvars) | list }}
+        edge_gateways: >
+          {{ groups['edge_gateways'] | map('extract', hostvars) | list }}
+
+    - name: Create template path
+      set_fact:
+        template_path: '../templates/{{ wg_template_name }}.conf.j2'
+
+    - name: Render template to a var
+      set_fact:
+        wg_config: "{{ lookup('template', template_path) }}"
+
+    - name: Create QR Code
+      ansible.builtin.command:
+        cmd: qrencode -t utf8 -
+        stdin: '{{ wg_config }}'
+      register: qrcode
+
+    - name: Create temp file
+      ansible.builtin.tempfile:
+        state: file
+        prefix: '{{ inventory_hostname }}_wg_'
+        suffix: '.conf'
+      register: tmpfile
+
+    - name: Build config
+      ansible.builtin.template:
+        src: ../templates/{{ wg_template_name }}.conf.j2
+        dest: '{{ tmpfile.path }}'
+
+    - name: Show QR Code
+      ansible.builtin.debug:
+        var: 'qrcode.stdout_lines'
+
+    - name: Show tmpfile path
+      ansible.builtin.debug:
+        var: 'tmpfile.path'

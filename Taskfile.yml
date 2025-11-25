@@ -42,6 +42,15 @@ tasks:
       vars:
         FILE: '{{.ITEM}}'
 
+  gen-local-config:
+    requires:
+      vars: [HOST]
+    cmd: >
+      ansible-playbook
+      -i ./hosts.yml
+      --limit={{.HOST}}
+      ./playbooks/gen-local-config.yml
+
   provision:localhost:
     requires:
       vars: [HOST]

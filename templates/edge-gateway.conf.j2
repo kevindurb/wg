@@ -9,7 +9,7 @@ PostDown = iptables -D FORWARD -i %i -j ACCEPT
 {% for peer in mesh_peers %}
 [Peer]
 PublicKey = {{ peer.wg_public_key }}
-AllowedIPs = {{ peer.wg_address }}/32, 10.1.0.0/16
+AllowedIPs = {{ peer.wg_address }}/32
 {% endfor %}
 
 # Edge Gateways

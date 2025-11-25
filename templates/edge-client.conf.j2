@@ -7,7 +7,7 @@ ListenPort = 51820
 {% for peer in edge_gateways %}
 [Peer]
 PublicKey = {{ peer.wg_public_key }}
-AllowedIPs = {{ peer.wg_address }}/32, 10.1.0.0/16
+AllowedIPs = 10.1.0.0/16
 Endpoint = {{ peer.wg_endpoint }}:51820
 PersistentKeepalive = 25
 {% endfor %}
